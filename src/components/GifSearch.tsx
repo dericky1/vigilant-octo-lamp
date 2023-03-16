@@ -10,6 +10,7 @@ const MyComponent: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [gifs, setGifs] = useState<Gif[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchData = async () => {
     try {
@@ -27,33 +28,72 @@ const MyComponent: React.FC = () => {
       }));
 
       setGifs(gifs);
+      setIsLoading(false);
+
+      if (gifs.length == 0) {
+        setIsLoading(true);
+      }
+      console.log(gifs);
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     fetchData();
   }, [currentPage]);
 
   const handlePreviousPage = () => {
     if (currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      }
+      setCurrentPage(currentPage - 1);
+    }
   };
-  const handleNextPage = () => {setCurrentPage(currentPage + 1);};
+  const handleNextPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
 
   return (
-    <div>
-      <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-      <button onClick={fetchData}>Search</button>
-      <div className="grid grid-cols-2 md:grid-cols-5">
-        {gifs.map((gif) => (
-          <img key={gif.id} src={gif.url} alt={gif.title} className="w-52 h-52" />
-        ))}
+    <div className="flex flex-col items-center justify-center h-screen bg-tealgreen">
+      <div className="bg-darkblue w-10/12 h-5/6 flex flex-col items-center justify-center rounded-lg">
+        <div className="flex mb-10 w-full">
+          <input
+            type="text"
+            className="form-input border-2 rounded-md py-2 px-4 focus:outline-none focus:border-blue-500 w-full ml-10"
+            placeholder="Enter your text here"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button
+            onClick={fetchData}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-10"
+          >
+            Search
+          </button>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-5">
+          {gifs.map((gif) => (
+            <img key={gif.id} src={gif.url} alt={gif.title} className="w-52 h-52" />
+          ))}
+        </div>
+        {isLoading == false ? (
+          <div className=" w-full flex justify-between mt-10">
+            <button
+              onClick={handlePreviousPage}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-10"
+            >
+              Previous
+            </button>
+            <button
+              onClick={handleNextPage}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-10"
+            >
+              Next
+            </button>
+          </div>
+        ) : (
+          <div></div>
+        )}
       </div>
-      <button onClick={handlePreviousPage}>Previous</button>
-      <button onClick={handleNextPage}>Next</button>
     </div>
   );
 };
