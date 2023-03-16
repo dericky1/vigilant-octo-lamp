@@ -33,33 +33,33 @@ const MyComponent: React.FC = () => {
       if (gifs.length == 0) {
         setIsLoading(true);
       }
-      console.log(gifs);
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, [currentPage]);
 
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
   };
+
   const handleNextPage = () => {
     setCurrentPage(currentPage + 1);
   };
 
+  useEffect(() => {
+    fetchData();
+  }, [currentPage]);
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-tealgreen">
-      <div className="bg-darkblue w-10/12 h-5/6 flex flex-col items-center justify-center rounded-lg">
-        <div className="flex mb-10 w-full">
+      <div className="bg-darkblue w-9/12 h-5/6 flex flex-col items-center justify-center rounded-lg">
+        <div className="flex w-9/12 absolute top-24">
           <input
             type="text"
             className="form-input border-2 rounded-md py-2 px-4 focus:outline-none focus:border-blue-500 w-full ml-10"
-            placeholder="Enter your text here"
+            placeholder="Search for a GIF here"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -70,13 +70,15 @@ const MyComponent: React.FC = () => {
             Search
           </button>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-5">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mt-12">
           {gifs.map((gif) => (
-            <img key={gif.id} src={gif.url} alt={gif.title} className="w-52 h-52" />
+            <a href={gif.url}>
+              <img key={gif.id} src={gif.url} alt={gif.title} className="w-52 h-52 rounded" />
+            </a>
           ))}
         </div>
         {isLoading == false ? (
-          <div className=" w-full flex justify-between mt-10">
+          <div className=" w-full flex justify-between mt-4">
             <button
               onClick={handlePreviousPage}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-10"
