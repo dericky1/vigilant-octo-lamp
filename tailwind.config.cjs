@@ -9,6 +9,7 @@ module.exports = {
       colors: {
         'tealgreen': '#2A9D8F',
         'darkblue': '#264653',
+        'lightorange': '#E9C46A',
       }
     },
   },

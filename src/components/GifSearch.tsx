@@ -11,6 +11,7 @@ const MyComponent: React.FC = () => {
   const [gifs, setGifs] = useState<Gif[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isSearchQuery = searchQuery.trim() !== "";
 
   const fetchData = async () => {
     try {
@@ -28,9 +29,13 @@ const MyComponent: React.FC = () => {
     }
   };
 
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
   const handleSearch = async () => {
-    setGifs([])
-    await fetchData()
+    setGifs([]);
+    await fetchData();
   };
 
   useEffect(() => {
@@ -55,32 +60,39 @@ const MyComponent: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-tealgreen">
-      <div className="bg-darkblue w-9/12 h-5/6 flex flex-col items-center justify-center rounded-lg">
-        <div className="flex w-9/12 absolute top-24">
+      <div className="bg-darkblue w-9/12 h-5/6 flex flex-col items-center justify-center rounded-md">
+        <div className="flex w-full mb-10">
           <input
             type="text"
             className="form-input border-2 rounded-md py-2 px-4 focus:outline-none focus:border-blue-500 w-full ml-10"
-            placeholder="Search for a GIF here"
+            placeholder="Search for a GIF"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleInputChange}
           />
           <button
             onClick={handleSearch}
+            disabled={!isSearchQuery}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-10"
           >
             Search
           </button>
         </div>
-          <div
-            ref={containerRef}
-            className="grid grid-cols-2 md:grid-cols-5 gap-2 mt-12 h-96 overflow-y-scroll scrollbar-none bg-"
-          >
-            {gifs.map((gif) => (
-              <a key={gif.id} href={gif.url}>
-                <img key={gif.id} src={gif.url} alt={gif.title} className="w-52 h-52 rounded" />
-              </a>
-            ))}
+        {gifs.length !== 0 ? (
+          <div className="rounded bg-lightorange">
+            <div
+              ref={containerRef}
+              className="grid grid-cols-2 md:grid-cols-5 gap-4 h-96 overflow-y-scroll scrollbar-none m-6"
+            >
+              {gifs.map((gif) => (
+                <a key={gif.id} href={gif.url}>
+                  <img key={gif.id} src={gif.url} alt={gif.title} className="w-48 h-48 rounded" />
+                </a>
+              ))}
+            </div>
           </div>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );
